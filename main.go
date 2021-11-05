@@ -90,10 +90,10 @@ func eventIsTooRecent(fileName string) bool {
 	//log.Println("sinceLastEventNanoSec :", sinceLastEventNanoSec)
 	//log.Println("minPeriodBetweenFileEvents :", minPeriodBetweenFileEvents)
 	if sinceLastEventNanoSec <= minPeriodBetweenFileEvents {
-		//log.Println("Trop recent")
+		//log.Println("Too recent")
 		result = true
 	} else {
-		//log.Println("Ca va")
+		//log.Println("Ok")
 		result = false
 	}
 	return result
@@ -172,7 +172,7 @@ func importFile(fileName string, profileID []byte) error {
 	var profileIDLength = 4
 	nbReadBytes, err = srcFile.Read(make([]byte, profileIDLength))
 	if nbReadBytes != profileIDLength {
-		err := errors.New("Longueur du profile ID incorrecte !")
+		err := errors.New("Incorrect profile ID length !")
 		return err
 	}
 	if err != nil {
@@ -194,7 +194,7 @@ func importFile(fileName string, profileID []byte) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//log.Printf("%d octets copiés\n", nbCopiedBytes+12) // A supprimer après debug
+	//log.Printf("%d copied bytes\n", nbCopiedBytes+12) // To delete after debugging
 
 	//dstFile.Write(b []byte)
 
@@ -220,13 +220,13 @@ func exportFile(fileName string) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//log.Println("Fichier exporté et prêt à être synchronisé : ", fileName)
+	//log.Println("File exported and now ready to be synchronized : ", fileName)
 	return nil
 }
 
 func hasProfileID(fileName string, parentFolder string, wantedProfileID []byte) (bool, error) {
 	if len(wantedProfileID) != 4 {
-		err := errors.New("Longueur du profile ID incorrecte !")
+		err := errors.New("Incorrect profile ID length !")
 		return false, err
 	}
 	testedFile, err := insistentOpen(storageDirectory + string(filepath.Separator) + fileName)
@@ -306,15 +306,15 @@ func filesManager() {
 								}
 								if event.Op&fsnotify.Create == fsnotify.Create {
 									if isProfileDataBaseFile(filepath.Base(event.Name)) {
-										log.Println("Nouveau profil créé par un autre PC !", filepath.Base(event.Name))
+										log.Println("New profile created by another PC !", filepath.Base(event.Name))
 									} else if isLocalProfilesJSONFile(filepath.Base(event.Name)) {
-										log.Println("Fichier localprofiles.json créé par un autre PC")
+										log.Println("localprofiles.json file created by another PC")
 									}
 								} else {
 									if isProfileDataBaseFile(filepath.Base(event.Name)) {
-										log.Println("Profil mis à jour par un autre PC :", filepath.Base(event.Name))
+										log.Println("Profile has been updated from another PC: ", filepath.Base(event.Name))
 									} else if isLocalProfilesJSONFile(filepath.Base(event.Name)) {
-										log.Println("Fichier localprofiles.json mis à jour par un autre PC")
+										log.Println("localprofiles.json has been updated from another PC")
 									}
 								}
 							}
@@ -327,15 +327,15 @@ func filesManager() {
 
 								if event.Op&fsnotify.Create == fsnotify.Create {
 									if isProfileDataBaseFile(filepath.Base(event.Name)) {
-										log.Println("Nouveau profil créé par Rocksmith !", filepath.Base(event.Name))
+										log.Println("New profile created by Rocksmith!", filepath.Base(event.Name))
 									} else if isLocalProfilesJSONFile(filepath.Base(event.Name)) {
-										log.Println("Fichier localprofiles.json créé par Rocksmith")
+										log.Println("localprofiles.json created by Rocksmith")
 									}
 								} else {
 									if isProfileDataBaseFile(filepath.Base(event.Name)) {
-										log.Println("Profil mis à jour par Rocksmith :", filepath.Base(event.Name))
+										log.Println("Profil has been updated by Rocksmith: ", filepath.Base(event.Name))
 									} else if isLocalProfilesJSONFile(filepath.Base(event.Name)) {
-										log.Println("Fichier localprofiles.json mis à jour par Rocksmith")
+										log.Println("localprofiles.json has been updated by Rocksmith")
 									}
 
 								}
@@ -350,16 +350,16 @@ func filesManager() {
 							newPath := oldPath + ".old"
 							os.Rename(oldPath, newPath)
 							deleteHash(filepath.Base(event.Name))
-							log.Println("fichier supprimé par un autre PC (extension \".old\" rajoutée) : ", filepath.Base(event.Name))
+							log.Println("File has been deleted by another PC (added \".old\" extension): ", filepath.Base(event.Name))
 						} else if inStorageFolder(event.Name) {
 							oldPath := syncDirectory + string(filepath.Separator) + filepath.Base(event.Name)
 							newPath := oldPath + ".old"
 							os.Rename(oldPath, newPath)
 							deleteHash(filepath.Base(event.Name))
 							if isProfileDataBaseFile(filepath.Base(event.Name)) {
-								log.Println("Profil supprimé par Rocksmith (extension \".old\" rajoutée) !", filepath.Base(event.Name))
+								log.Println("Profile has been deleted by Rocksmith (added \".old\" extension)! ", filepath.Base(event.Name))
 							} else if isLocalProfilesJSONFile(filepath.Base(event.Name)) {
-								log.Println("localprofiles.json supprimé par Rocksmith (extension \".old\" rajoutée) ! ", filepath.Base(event.Name))
+								log.Println("localprofiles.json has been deleted by Rocksmith (added \".old\" extension)! ", filepath.Base(event.Name))
 							}
 
 						}
@@ -368,7 +368,7 @@ func filesManager() {
 				}
 			}
 		case err := <-filesWatcher.Errors:
-			log.Println("Erreur : ", err)
+			log.Println("Error: ", err)
 		}
 	}
 }
@@ -383,7 +383,7 @@ func main() {
 
 	localprofiles, err := insistentOpen(storageDirectory + string(filepath.Separator) + "localprofiles.json")
 	if err != nil {
-		log.Println("Assurez-vous d'avoir mis l'exécutable dans le dossier \"Storage\" contenant les profils Rocksmith.")
+		log.Println("Make sure you put this executable in the \"Storage\" folder which contains the Rocksmith profiles.")
 		log.Fatal(err)
 	}
 	// Creates a profile ID variable with a length of 4 bytes, to get the profile ID from the localprofiles.json file
@@ -393,8 +393,8 @@ func main() {
 		log.Fatal("Problem with localprofiles.json\n", err)
 	}
 	localProfileID = profileID
-	log.Println("Analyse du fichier de profils Rocksmith localprofiles.json...")
-	log.Printf("Profile ID trouvé : 0x%08x\n", localProfileID)
+	log.Println("Analysing localprofiles.json...")
+	log.Printf("Profile ID found: 0x%08x\n", localProfileID)
 	err = localprofiles.Close()
 	if err != nil {
 		log.Fatal(err)
@@ -402,7 +402,7 @@ func main() {
 
 	// Make a list of all files to be imported from Sync to Storage
 	syncFiles, _ := ioutil.ReadDir(syncDirectory)
-	log.Println("Liste des fichiers à récupérer depuis le répertoire sync :")
+	log.Println("List of files to retrieve from the sync folder:")
 	var syncFilesToImport []os.FileInfo
 	for _, file := range syncFiles {
 		if isProfileDataBaseFile(file.Name()) || isLocalProfilesJSONFile(file.Name()) {
@@ -413,13 +413,13 @@ func main() {
 	for _, file := range syncFilesToImport {
 		log.Println(file.Name())
 	}
-	log.Println("Mise à jour des profils locaux avec les profils synchronisés :")
+	log.Println("Updating local profiles with the data from synchronized profiles:")
 	// Delete old profiles in the Storage folder (adding a ".old" to their name)
 	storageFiles, _ := ioutil.ReadDir(storageDirectory)
-	//log.Println("Liste des fichiers supprimés dans le répertoire storage (ajout de l'extension .old) :")
+	//log.Println("List of deleted files in the storage folder (added .old extension):")
 	for _, file := range storageFiles {
 		if strings.HasSuffix(file.Name(), "_prfldb") || file.Name() == "localprofiles.json" {
-			log.Println("Fichier supprimé (.old) :", file.Name())
+			log.Println("Deleted file (.old):", file.Name())
 			err = os.Rename(file.Name(), file.Name()+".old")
 			if err != nil {
 				log.Fatal(err)
@@ -433,9 +433,9 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Println("Fichier importé : ", file.Name())
+		log.Println("Imported file: ", file.Name())
 	}
-	log.Println("Prêt ! Assurez-vous que le dossier", syncDirectory, "soit bien synchronisé. Syncthing doit être lancé.")
+	log.Println("Ready! make sure the ", syncDirectory, " folder is synchronized. Syncthing must be running.")
 
 	go filesManager()
 
