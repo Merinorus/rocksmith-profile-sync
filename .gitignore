@@ -1,0 +1,10 @@
+# Files matching these patterns will be excluded from Git sync
+
+*.log
+*.exe
+# Syncthing folder marker
+.stfolder
+# Game profile
+*_prfldb
+localprofiles.json
+*.old
