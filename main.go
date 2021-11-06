@@ -16,22 +16,21 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	//"github.com/fsnotify/fsnotify"
 )
 
-// log
-// some tests on filenames
-// files
-// list files in a directory
-// comparison of two arrayw of bytes
-// Get the parent directory of a file
-
-//import "encoding/hex"
 // to be notified when a repertory is modified (file creation ,deletion etc)
 
-var logFileName = "rocksmithprofilesync.log"
-var syncDirectory = "..\\Sync"
+// Location of the game data storage directory.
+// "." by default, it means that the tool executable is put directly in this directory.
 var storageDirectory = "."
+
+// Name of the log file. Will be written in the storage directory.
+var logFileName = "rocksmithprofilesync.log"
+
+// Location of the "cloud sync" folder.
+// Located next to the storage directory by default if you use Syncthing.
+// You may have to changed it if it's OneDrive, Dropbox etc.
+var syncDirectory = "..\\Sync"
 var filesHashMap = make(map[string]([]byte)) // Map referenced by the file names which keeps the MD5 hash of all files (profiles and localprofiles.json)
 var filesLastAccessMap = make(map[string]time.Time)
 var minPeriodBetweenFileEvents int64 = 700000000 // nanoseconds
